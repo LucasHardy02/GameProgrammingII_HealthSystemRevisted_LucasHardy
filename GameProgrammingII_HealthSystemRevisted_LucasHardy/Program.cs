@@ -16,13 +16,22 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             private set { _name = value; }
         }
 
-        public Health Health;
-        public Health Shield;
+        public Health Health = new Health(100);
+        public Health Shield = new Health(100);
 
         public void TakeDamage(int damageAmount)
         {
-            if (Health.Shield > 0)
+            if (damageAmount > Shield.CurrentHealth)
             {
+                float spillDamage;
+
+                spillDamage = damageAmount - Shield.CurrentHealth;
+
+                Shield.CurrentHealth = 0;
+
+                Health.TakeDamage(spillDamage);
+
+                
 
             }
         }
@@ -45,11 +54,11 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 
         public float MaxHealth
         {
-            get { return MaxHealth; }
-            private set { MaxHealth = value; }
+            get { return _maxHealth; }
+            private set { _maxHealth = value; }
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(float damage)
         {
             if (damage < 0)
             {
@@ -60,7 +69,7 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             {
                 CurrentHealth = 0;
                 Console.WriteLine("Damage was greater than players health");
-                HealthStatus();
+                GetHealthStatus();
             }
             else
             {
@@ -85,14 +94,14 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             {
                 CurrentHealth = MaxHealth;
                 Console.WriteLine("Attemted to heal past full health")
-                HealthStatus();
+                GetHealthStatus();
             }
             else
             {
                 CurrentHealth += healingAmount;
             }
         }
-        public void HealthStatus()
+        public void GetHealthStatus()
         {
             if (CurrentHealth == 100)
             {
