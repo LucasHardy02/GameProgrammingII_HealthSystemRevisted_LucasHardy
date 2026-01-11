@@ -4,11 +4,22 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 {
+    
     internal class Player
     {
+        static int healthAmount = Health.MaxHealth;
+        static int shieldAmount = ;
+        public Player(string name, int maxHealth, int maxShield)
+        {
+            _name = name;
+            healthAmount = maxHealth;
+            shieldAmount = maxShield;
+        }
+
         private string _name;
         public string Name
         {
@@ -16,8 +27,8 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             private set { _name = value; }
         }
 
-        public Health Health = new Health(100);
-        public Health Shield = new Health(100);
+        public Health Health = new Health(healthAmount);
+        public Health Shield = new Health(shieldAmount);
 
         public void TakeDamage(int damageAmount)
         {
@@ -27,17 +38,24 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 
                 spillDamage = damageAmount - Shield.CurrentHealth;
 
-                Shield.CurrentHealth = 0;
-
-                Health.TakeDamage(spillDamage);
-
-                
-
+                if (damageAmount < 0)
+                {
+                    Console.WriteLine("Attemted to recieve damage with a negative value");
+                }
+                else
+                {
+                    Shield.TakeDamage(damageAmount);
+                    Health.TakeDamage(spillDamage);
+                }
+                    
             }
         }
+        
     }
     internal class Health
     {
+        private float _maxHealth;
+
         public Health(int maxHealth) 
         { 
             _maxHealth = maxHealth;
@@ -50,7 +68,6 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             private set { _currentHealth = value; }
         }
 
-        private float _maxHealth;
 
         public float MaxHealth
         {
@@ -93,7 +110,7 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             if (CurrentHealth == MaxHealth)
             {
                 CurrentHealth = MaxHealth;
-                Console.WriteLine("Attemted to heal past full health")
+                Console.WriteLine("Attemted to heal past full health");
                 GetHealthStatus();
             }
             else
@@ -131,8 +148,10 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
     }
     internal class Program
     {
+        
         static void Main(string[] args)
         {
+
         }
     }
 }
