@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 {
-    
+
     internal class Player
     {
 
@@ -29,18 +26,18 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             Health = new Health(maxHealth);
         }
 
-        
-        
+
+
 
         private string _name;
         public string Name
         {
-            get { return _name; } 
+            get { return _name; }
             set { _name = value; }
         }
 
-        
-        
+
+
 
         public void TakeDamage(int damageAmount)
         {
@@ -60,18 +57,26 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
                 {
                     Health.TakeDamage(spillDamage);
                 }
-                    
+
             }
         }
-        
+       
+        public void ShowHUD()
+        {
+            Console.WriteLine($"Name: {Name}");
+            Console.WriteLine($"Current Health: {Health.CurrentHealth}");
+            Console.WriteLine($"Current Shield: {Shield.CurrentHealth}");
+            Console.WriteLine($"Health Status: {Health.HealthStatus()}");
+        }
     }
     internal class Health
     {
         private float _maxHealth;
 
-        public Health(int maxHealth) 
-        { 
+        public Health(int maxHealth)
+        {
             _maxHealth = maxHealth;
+            _currentHealth = maxHealth;
         }
         private float _currentHealth;
 
@@ -90,6 +95,7 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 
         public void TakeDamage(float damage)
         {
+
             if (damage < 0)
             {
                 damage = 0;
@@ -99,12 +105,14 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             {
                 CurrentHealth = 0;
                 Console.WriteLine("Damage was greater than players health");
-                GetHealthStatus();
+
             }
             else
             {
                 CurrentHealth -= damage;
             }
+            
+            
         }
 
         public void Restore()
@@ -124,52 +132,103 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
             {
                 CurrentHealth = MaxHealth;
                 Console.WriteLine("Attemted to heal past full health");
-                GetHealthStatus();
+
             }
             else
             {
                 CurrentHealth += healingAmount;
             }
+
         }
-        public void GetHealthStatus()
+        public string HealthStatus()
         {
-            if (CurrentHealth == 100)
-            {
-                Console.WriteLine("Character is Healthy");
-            }
-            if (CurrentHealth < 100)
-            {
-                Console.WriteLine("Character suffered minor damage");
-            }
-            if (CurrentHealth < 75)
-            {
-                Console.WriteLine("Charcter suffered moderate damage");
-            }
-            if (CurrentHealth < 50)
-            {
-                Console.WriteLine("Character suffered major damage");
-            }
-            if (CurrentHealth < 25)
-            {
-                Console.WriteLine("Character is on their last legs");
-            }
             if (CurrentHealth == 0)
             {
-                Console.WriteLine("Character is dead");
+                return "Character is dead";
             }
+            else if (CurrentHealth < 25)
+            {
+                return "Character is on their last legs";
+            }
+            else if (CurrentHealth < 50)
+            {
+                return "Character suffered major damage";
+            }
+            else if (CurrentHealth < 75)
+            {
+                return "Charcter suffered moderate damage";
+            }
+            else if (CurrentHealth < 100)
+            {
+                return "Character suffered minor damage";
+            }
+            else
+            {
+                return "Character is Healthy";
+            }
+            
         }
     }
     internal class Program
     {
-        
+        public string selectedName;
+        static bool gameRunning = true;
         static void Main(string[] args)
         {
+
+           
+            Console.WriteLine("Please input your name");
             
             string selectedName = Console.ReadLine();
-
-
-            Player player = new Player(name: selectedName, maxHealth: 100, maxShield: 100);
+            Console.Clear();
             
-    }
+            Player player = new Player(name: selectedName, maxHealth: 100, maxShield: 100);
+
+            player.ShowHUD();
+
+            Console.WriteLine("Press D key to take damage or H key to heal");
+            ConsoleKeyInfo playerInput = Console.ReadKey(true);
+
+            if (gameRunning == true)
+            {
+                if (player.Health.CurrentHealth <= 0)
+                {
+                    Console.WriteLine("You Died, press any key...");
+                    Console.ReadKey();
+                    gameRunning = false;
+                }
+                else
+                {
+                    if (playerInput.Key == ConsoleKey.D)
+                    {
+                        Random random = new Random();
+                        int damageAmount = random.Next(21);
+                        player.TakeDamage(damageAmount);
+                    }
+                    else if (playerInput.Key == ConsoleKey.H)
+                    {
+                        Random random = new Random();
+                        int healingAmount = random.Next(21);
+                        player.Health.Heal(healingAmount);
+                    }
+
+                }
+            }
+            if (gameRunning == false)
+            {
+                return;
+            }
+                
+            
+            
+
+
+
+
+
+
+        }
+        
     }
 }
+
