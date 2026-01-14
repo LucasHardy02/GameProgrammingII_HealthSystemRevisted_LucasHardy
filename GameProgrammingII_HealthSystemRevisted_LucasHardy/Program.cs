@@ -59,6 +59,11 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
                 }
 
             }
+            else
+            {
+                Shield.TakeDamage(damageAmount);
+
+            }
         }
        
         public void ShowHUD()
@@ -122,18 +127,21 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
 
         public void Heal(int healingAmount)
         {
-            if (healingAmount < 0)
-            {
-                healingAmount = 0;
-                Console.WriteLine("Attemted to heal with a negative value");
-            }
-
-            if (CurrentHealth == MaxHealth)
+            if (CurrentHealth + healingAmount > MaxHealth)
             {
                 CurrentHealth = MaxHealth;
                 Console.WriteLine("Attemted to heal past full health");
+                Console.ReadKey();
+            }
+           
+            else if (healingAmount < 0)
+            {
+                healingAmount = 0;
+                Console.WriteLine("Attemted to heal with a negative value");
+                Console.ReadKey();
 
             }
+
             else
             {
                 CurrentHealth += healingAmount;
@@ -175,22 +183,23 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
         static bool gameRunning = true;
         static void Main(string[] args)
         {
+            Random random = new Random();
 
-           
             Console.WriteLine("Please input your name");
-            
+
             string selectedName = Console.ReadLine();
             Console.Clear();
-            
+
             Player player = new Player(name: selectedName, maxHealth: 100, maxShield: 100);
-
-            player.ShowHUD();
-
-            Console.WriteLine("Press D key to take damage or H key to heal");
-            ConsoleKeyInfo playerInput = Console.ReadKey(true);
-
-            if (gameRunning == true)
+            while (gameRunning == true)
             {
+                
+
+                player.ShowHUD();
+
+                Console.WriteLine("Press D key to take damage or H key to heal");
+                ConsoleKeyInfo playerInput = Console.ReadKey(true);
+
                 if (player.Health.CurrentHealth <= 0)
                 {
                     Console.WriteLine("You Died, press any key...");
@@ -199,25 +208,31 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
                 }
                 else
                 {
+                    Console.Clear();
                     if (playerInput.Key == ConsoleKey.D)
                     {
-                        Random random = new Random();
+                        
                         int damageAmount = random.Next(21);
                         player.TakeDamage(damageAmount);
+
+                        
+                        
                     }
                     else if (playerInput.Key == ConsoleKey.H)
                     {
-                        Random random = new Random();
+                        
                         int healingAmount = random.Next(21);
                         player.Health.Heal(healingAmount);
+
+                        
+                        
                     }
+                    player.ShowHUD();
+                    Console.Clear();
 
                 }
             }
-            if (gameRunning == false)
-            {
-                return;
-            }
+            
                 
             
             
