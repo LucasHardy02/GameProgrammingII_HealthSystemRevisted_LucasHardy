@@ -11,24 +11,36 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
     
     internal class Player
     {
-        static int healthAmount = Health.MaxHealth;
-        static int shieldAmount = ;
+
+
+
+
+
+
+
+
+        public Health Health;
+        public Health Shield;
+
         public Player(string name, int maxHealth, int maxShield)
         {
             _name = name;
-            healthAmount = maxHealth;
-            shieldAmount = maxShield;
+            Shield = new Health(maxShield);
+            Health = new Health(maxHealth);
         }
+
+        
+        
 
         private string _name;
         public string Name
         {
             get { return _name; } 
-            private set { _name = value; }
+            set { _name = value; }
         }
 
-        public Health Health = new Health(healthAmount);
-        public Health Shield = new Health(shieldAmount);
+        
+        
 
         public void TakeDamage(int damageAmount)
         {
@@ -37,6 +49,8 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
                 float spillDamage;
 
                 spillDamage = damageAmount - Shield.CurrentHealth;
+                Shield.TakeDamage(damageAmount);
+
 
                 if (damageAmount < 0)
                 {
@@ -44,7 +58,6 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
                 }
                 else
                 {
-                    Shield.TakeDamage(damageAmount);
                     Health.TakeDamage(spillDamage);
                 }
                     
@@ -151,7 +164,12 @@ namespace GameProgrammingII_HealthSystemRevisted_LucasHardy
         
         static void Main(string[] args)
         {
+            
+            string selectedName = Console.ReadLine();
 
-        }
+
+            Player player = new Player(name: selectedName, maxHealth: 100, maxShield: 100);
+            
+    }
     }
 }
